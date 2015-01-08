@@ -158,7 +158,8 @@ class NutchCrawl(Crawl):
 
     def start(self):
         make_dir(self.crawl_dir)
-        self.proc = Popen(['crawl', self.seed_dir, self.crawl_dir, str(self.number_of_rounds)])
+        self.proc = run_proc("repeat.py --seed_dir {} --crawl_dir {}".format(
+                             self.seed_dir, self.crawl_dir)
         return self.proc.pid
 
 
