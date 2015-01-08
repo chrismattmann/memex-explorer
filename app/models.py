@@ -85,6 +85,7 @@ class Crawl(db.Model):
     crawler = db.Column(db.Text)
     config = db.Column(db.Text)
     seeds_list = db.Column(db.String(64))
+    status = db.Column(db.String(64))
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
     data_model_id = db.Column(db.Integer, db.ForeignKey('data_model.id'))
     data_sources = db.relationship('DataSource', secondary=crawl_data, \
