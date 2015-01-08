@@ -158,8 +158,9 @@ class NutchCrawl(Crawl):
 
     def start(self):
         make_dir(self.crawl_dir)
-        self.proc = run_proc("repeat.py --seed_dir {} --crawl_dir {}".format(
-                             self.seed_dir, self.crawl_dir)
+        self.proc = run_proc(
+            "repeat.py --crawl_id {} --seed_dir {} --crawl_dir {}".format(
+                         self.crawl_id, self.seed_dir, self.crawl_dir))
         return self.proc.pid
 
 
