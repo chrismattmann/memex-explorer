@@ -274,10 +274,6 @@ def crawl(project_slug, crawl_slug):
             return render_template('crawl.html', crawl=crawl,
                 status=status_crawl(project_slug, crawl_slug), model=model)
 
-
-        relevant_path = url_for('relevant_pages', project_slug=project.slug,
-                crawl_slug=crawl.slug)
-
         return render_template('crawl.html', scripts=scripts,
                 status=status_crawl(project_slug, crawl_slug), divs=divs,
                 crawl=crawl, model=model)
