@@ -51,11 +51,6 @@ class RegisterCrawlTest(TestSkeleton):
         self.assertEqual(rv.status_code, 200)
         self.assertIn("UNIQUETITLE", rv.data)
 
-        # Posting bad data should still generate a 200 OK
-        rv = self.app.get('/',)
-        self.assertEqual(rv.status_code, 200)
-        self.assertIn("UNIQUETITLE", rv.data)
-
     # def test_duplicate_insert(self):
     #     """test error handling of duplicate data"""
 
