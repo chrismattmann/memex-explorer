@@ -289,8 +289,9 @@ def crawl(project_slug, crawl_slug):
 
 @app.route('/<project_slug>/crawls/<crawl_slug>/delete', methods=['POST'])
 def delete_crawl(project_slug, crawl_slug):
-    crawl = get_crawl(crawl_slug)
-    shutil.rmtree(CRAWLS_PATH + crawl.name)
+    project = get_project(project_slug)
+    crawl = get_crawl(project, crawl_slug)
+    shutil.rmtree(CRAWLS_PATH + str(crawl.id))
     db.session.delete(crawl)
     db.session.commit()
     flash('%s has successfully been deleted.' % crawl.name, 'success')
@@ -308,17 +309,10 @@ def edit_crawl(project_slug, crawl_slug):
             crawl.slug = text.urlify(form.name.data)
         if form.description.data:
             crawl.description = form.description.data
-        if form.crawler.data == 'nutch':
-            crawl.crawler = form.crawler.data
-            crawl.data_model_id = ''
-        elif form.crawler.data == 'ache':
-            crawl.crawler = form.crawler.data
         if form.seeds_list.data:
             seed_filename = secure_filename(form.seeds_list.data.filename)
             form.seeds_list.data.save(SEED_FILES + seed_filename)
             crawl.seeds_list = SEED_FILES + seed_filename
-        if form.data_model.data:
-            crawl.data_model_id = form.data_model.data.id
         db.session.commit()
         flash('%s has successfully been changed.' % crawl.name, 'success')
         return redirect(url_for('project', project_slug=project_slug))
@@ -557,10 +551,8 @@ def image_space(project_slug):
 @app.route('/<project_slug>/image_space/<image_space_slug>/')
 def image_table(project_slug, image_space_slug):
     project = get_project(project_slug)
-    image_space = ImageSpace.query.filter_by(name=image_space_slug).first()
-    images = image_space.images.all()
-    print(images)
-    return render_template('image_table.html', images=images, project=project, image_space=image_space)
+    image_space = get_image_space_from_name(image_space_slug)
+    return render_template('image_table.html', images=image_space.images, project=project, image_space=image_space)
 
 
 @app.route('/<project_slug>/upload_image', methods=['GET', 'POST'])
