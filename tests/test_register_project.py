@@ -8,7 +8,7 @@ class RegisterProjectTest(TestSkeleton):
 
     def test_page(self):
         """Test if `/add_project` endpoint exists."""
-        response = self.app.get('/add_project')
+        response = self.test_app.get('/add_project')
         assert response.status_code == 200
 
     def test_no_data(self):
@@ -17,7 +17,7 @@ class RegisterProjectTest(TestSkeleton):
         data = {}
 
         # Bad Post is still a 200 OK
-        rv = self.app.post('/add_project', data=data, follow_redirects=True)
+        rv = self.test_app.post('/add_project', data=data, follow_redirects=True)
         self.assertEqual(rv.status_code, 200)
         self.assertIn("This field is required.", rv.data)
 
@@ -27,7 +27,7 @@ class RegisterProjectTest(TestSkeleton):
         data = {"description": "test test"}
 
         # Posting bad data should still generate a 200 OK
-        rv = self.app.post('/add_project', data=data, follow_redirects=True)
+        rv = self.test_app.post('/add_project', data=data, follow_redirects=True)
         self.assertEqual(rv.status_code, 200)
         self.assertIn("This field is required.", rv.data)
 
@@ -38,8 +38,8 @@ class RegisterProjectTest(TestSkeleton):
                 "description": "DESCRIPTION",
                 "icon": "fa-arrows"}
 
-        rv = self.app.post('/add_project', data=data, follow_redirects=True)
-        
+        rv = self.test_app.post('/add_project', data=data, follow_redirects=True)
+
         self.assertEqual(rv.status_code, 200)
         self.assertIn("Project &#39;UNIQUETITLE&#39; was successfully registered", rv.data)
 
@@ -51,13 +51,13 @@ class RegisterProjectTest(TestSkeleton):
                 "description": "DESCRIPTION",
                 "icon": "fa-arrows"}
 
-        rv = self.app.post('/add_project', data=data, follow_redirects=True)
+        rv = self.test_app.post('/add_project', data=data, follow_redirects=True)
         
         self.assertEqual(rv.status_code, 200)
         self.assertIn("Project &#39;UNIQUETITLE&#39; was successfully registered", rv.data)
 
 
         # POST same data again
-        rv = self.app.post('/add_project', data=data, follow_redirects=True)
+        rv = self.test_app.post('/add_project', data=data, follow_redirects=True)
         self.assertEqual(rv.status_code, 200)
         self.assertIn("Project &#39;UNIQUETITLE&#39; already exists", rv.data)
