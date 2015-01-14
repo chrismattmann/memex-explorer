@@ -222,7 +222,6 @@ def add_crawl(project_slug):
         if form.crawler.data == "ache":
             form.seeds_list.data.save(app.config['SEED_FILES'] + seed_filename)
         elif form.crawler.data == "nutch":
-            print("\n", app.config['SEED_FILES'], '\n')
             seed_folder = text.urlify(form.name.data)
             subprocess.Popen(['mkdir', os.path.join(app.config['SEED_FILES'], seed_folder)]).wait()
             form.seeds_list.data.save(os.path.join(app.config['SEED_FILES'], seed_folder, seed_filename))
@@ -449,11 +448,9 @@ def dump_images(project_slug, crawl_slug):
         images = os.listdir(os.path.join(app.config['IMAGE_SPACE_PATH'], str(image_space.id), 'images'))
         for image in images:
             image_path = os.path.join(app.config['IMAGE_SPACE_PATH'], str(image_space.id), 'images', image)
-            print(image_path)
             with open(image_path, 'rb') as f:
                 exif_data = exifread.process_file(f)
                 db_process_exif(exif_data, crawl_slug, image, image_space)
-        print("Images dumped for NUTCH crawl %s" % crawl.name)
         return redirect(url_for('image_table', project_slug=project.slug, image_space_slug=crawl.slug))
     else:
         return "Could not dump images"
@@ -551,7 +548,6 @@ def image_table(project_slug, image_space_slug):
     project = get_project(project_slug)
     image_space = ImageSpace.query.filter_by(name=image_space_slug).first()
     images = image_space.images.all()
-    print(images)
     return render_template('image_table.html', images=images, project=project, image_space=image_space)
 
 
