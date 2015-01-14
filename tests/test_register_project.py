@@ -2,62 +2,63 @@
 Testing project creation.
 """
 
+#  IMPORTS
+# =========
+
 from test_skeleton import TestSkeleton
+
 
 class RegisterProjectTest(TestSkeleton):
 
-    def test_page(self):
+    #  SETUP & TEARDOWN
+    # ==================
+    # Not required to unit test projects (no side effects)
+
+
+    #  UNIT TESTS
+    # ============
+
+    def test_page_exists(self):
         """Test if `/add_project` endpoint exists."""
-        response = self.test_app.get('/add_project')
-        assert response.status_code == 200
+        rv = self.test_app.get('/add_project')
+        self.assertEqual(rv.status_code, 200)
 
     def test_no_data(self):
-        """test error handling of no data being supplied during submit"""
+        """"Send a POST request with no data."""
 
         data = {}
 
-        # Bad Post is still a 200 OK
         rv = self.test_app.post('/add_project', data=data, follow_redirects=True)
-        self.assertEqual(rv.status_code, 200)
         self.assertIn("This field is required.", rv.data)
 
     def test_partial_data(self):
-        """test error handling of partial data in form"""
+        """Send a POST request with partial data."""
 
         data = {"description": "test test"}
 
-        # Posting bad data should still generate a 200 OK
         rv = self.test_app.post('/add_project', data=data, follow_redirects=True)
-        self.assertEqual(rv.status_code, 200)
         self.assertIn("This field is required.", rv.data)
 
-    def test_insert_data(self):
-        """test proper insertion"""
+    def test_register_project(self):
+        """Register a valid project."""
 
-        data = {"name": "UNIQUETITLE",
-                "description": "DESCRIPTION",
+        data = {"name": "cats",
+                "description": "Cats are cute!",
                 "icon": "fa-arrows"}
 
         rv = self.test_app.post('/add_project', data=data, follow_redirects=True)
-
-        self.assertEqual(rv.status_code, 200)
-        self.assertIn("Project &#39;UNIQUETITLE&#39; was successfully registered", rv.data)
+        self.assertIn("Project &#39;cats&#39; was successfully registered", rv.data)
 
 
-    def test_duplicate_insert(self):
-        """test error handling of duplicate data"""
+    def test_duplicate_project(self):
+        """Register a duplicate project."""
 
-        data = {"name": "UNIQUETITLE",
-                "description": "DESCRIPTION",
+        data = {"name": "cats",
+                "description": "Cats are cute!",
                 "icon": "fa-arrows"}
 
         rv = self.test_app.post('/add_project', data=data, follow_redirects=True)
-        
-        self.assertEqual(rv.status_code, 200)
-        self.assertIn("Project &#39;UNIQUETITLE&#39; was successfully registered", rv.data)
+        self.assertIn("Project &#39;cats&#39; was successfully registered", rv.data)
 
-
-        # POST same data again
         rv = self.test_app.post('/add_project', data=data, follow_redirects=True)
-        self.assertEqual(rv.status_code, 200)
-        self.assertIn("Project &#39;UNIQUETITLE&#39; already exists", rv.data)
+        self.assertIn("Project &#39;cats&#39; already exists", rv.data)
